@@ -1,1 +1,171 @@
+------------------------------------------------Іменування-----------------------------
+// Поганий приклад - скорочення та незрозумілі назв
+func cAvg(d: [Double]) -> Double {
+    let s = d.reduce(0, +)
+    return s / Double(d.count)
+}
+
+let r = [0.1, 0.3, 0.5, 0.7]
+print(cAvg(d: r))
+
+
+// Гарний приклад - назви зрозумілі і відображають суть дій
+func calculateAverageRadiation(for readings: [Double]) -> Double {
+    let total = readings.reduce(0, +)
+    return total / Double(readings.count)
+}
+
+let radiationReadings = [0.1, 0.3, 0.5, 0.7]
+print(calculateAverageRadiation(for: radiationReadings))
+
+
+
+------------------------------------------------Форматування-----------------------------
+
+// Гарний приклад - форматування послідовне
+func fetchRadiationData(from url: URL) {
+    guard let data = try? Data(contentsOf: url) else {
+        print("Помилка завантаження даних")
+        return
+    }
+    print("Дані завантажено успішно")
+}
+
+// Поганий приклад - різні стилі форматування
+func fetchRadiationData(from url: URL)
+{
+guard let data = try? Data(contentsOf: url) else {
+print("Помилка завантаження даних")
+return
+}
+print("Дані завантажено успішно")
+}
+
+
+-----------------------------------------------Типізація------------------------------
+
+// Гарний приклад - Чітке визначення типу для публічної функції
+public func calculateRadiationLevel(readings: [Double]) -> Double {
+    return readings.reduce(0, +) / Double(readings.count)
+}
+
+// Поганий приклад - Відсутність явного типу повернення робить код менш зрозумілим
+public func calculateRadiationLevel(readings: [Double]) -> Any { // Погано
+    readings.reduce(0, +) / Double(readings.count)
+}
+
+----------------------------------------------Використання let/var-------------------------
+// Гарний приклад - Константа для максимального рівня радіації
+let maxRadiationLimit = 0.30 
+func isRadiationSafe(currentLevel: Double) -> Bool {
+    return currentLevel < maxRadiationLimit
+}
+
+// Поганий приклад - var maxRadiationLimit = 0.30,можна випадково змінити значення
+func isRadiationSafe(currentLevel: Double) -> Bool {
+    return currentLevel < maxRadiationLimit
+}
+
+
+-----------------------------------------------Коментарі------------------------------
+
+// Хороший приклад - коментарі пояснють що саме виконується в коді.
+
+// Обчислюємо середній рівень радіації
+let averageRadiation = calculateAverageRadiation(for: readings)
+
+// Перевіряємо, чи рівень безпечний
+let isSafe = isRadiationSafe(currentLevel: averageRadiation)
+
+// Поганий приклад - коментарі не пояснюють, що саме виконується в коді
+
+// Обчислюємо середній рівень
+let averageRadiation = calculateAverageRadiation(for: readings)
+
+// Перевіряємо рівень
+let isSafe = isRadiationSafe(currentLevel: averageRadiation)
+
+
+-----------------------------------------------Документування------------------------------
+
+// Гарний приклад
+
+/// Функція для обчислення середнього рівня радіації
+///
+/// - Parameter readings: Масив значень типу `Double`, що представляють показники рівня радіації.
+/// - Returns: Середнє значення рівня радіації типу `Double`.
+/// - Note: Якщо масив порожній, функція поверне `NaN` (Not a Number).
+func calculateAverageRadiation(for readings: [Double]) -> Double {
+    let total = readings.reduce(0, +)
+    return total / Double(readings.count)
+}
+
+// Поганий приклад - Опис не дає достатньо інформації
+
+/// Функція для обчислення середнього рівня радіації
+func calculateAverageRadiation(for readings: [Double]) -> Double {
+    let total = readings.reduce(0, +)
+    return total / Double(readings.count)
+}
+
+-----------------------------------------------Обробка помилок------------------------------
+
+func getRadiationLevel(level: Double) throws -> Double {
+    if level < 0 {
+        throw NSError(domain: "com.sensor.error", code: 1, userInfo: [NSLocalizedDescriptionKey: "Помилка: Неприпустимий рівень радіації (менше 0)."])
+    }
+    return level
+}
+
+// Поганий приклад
+func readRadiationLevel(level: Double) {
+    let level = try getRadiationLevel(level: level)
+    print("Рівень радіації: \(level) мкЗв/год")
+}
+
+// Хороший приклад - використання do-catch для обробки виключень
+func readRadiationLevel(level: Double) {
+    do {
+        let level = try getRadiationLevel(level: level)
+        print("Рівень радіації: \(level) мкЗв/год")
+    } catch let error as NSError {
+        print("Помилка: \(error.localizedDescription)")
+    }
+}
+
+
+-----------------------------------------------Опціонали------------------------------
+
+// Приклад використання
+let mySensor = -2.0
+readRadiationLevel(level: mySensor)
+
+
+
+// Поганий приклад - форсоване розкриття опціонала без перевірки
+func displayRadiationLevel(level: Int?) {
+    let radiationLevel = level!
+    print("Рівень радіації: \(radiationLevel)")
+}
+
+
+let level: Int? = nil
+displayRadiationLevel(level: level)
+
+// Хороший приклад - безпечне розкриття опціонала за допомогою if let
+func displayRadiationLevel(level: Int?) {
+    if let radiationLevel = level {
+        print("Рівень радіації: \(radiationLevel)")
+    } else {
+        print("Рівень радіації невідомий або не визначений.")
+    }
+}
+
+let level: Int? = nil
+displayRadiationLevel(level: level)  
+
+
+
+
+
 
