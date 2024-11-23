@@ -154,25 +154,25 @@ a.	print("Помилка: \(error.localizedDescription)")
 
 8)	Розділяйте складність.
 Розділення функцій за принципом Single Responsibility спрощує розуміння, тестування та підтримку коду.
-1	// Поганий приклад - форсоване розкриття опціонала без перевірки
-2	func displayRadiationLevel(level: Int?) {
-3	let radiationLevel = level!
-4	print("Рівень радіації: \(radiationLevel)")
+
+1	// Поганий приклад - метод виконує одразу дві задачі
+2	func fetchAndAnalyzeRadiation() -> Bool {
+3	let radiationLevel = Double.random(in: 0...200) // Отримання даних
+4	return radiationLevel > 100.0                 // Аналіз
 5	}
-6	let level: Int? = nil
-7	displayRadiationLevel(level: level)
 
-8	// Хороший приклад - безпечне розкриття опціонала за допомогою if let
-9	func displayRadiationLevel(level: Int?) {
-10	if let radiationLevel = level {
-a.	print("Рівень радіації: \(radiationLevel)")
-11	} else {
-a.	print("Рівень радіації невідомий або не визначений.")
+
+
+
+6	// Гарний приклад - кожен метод має 1 свою задачу
+7	func fetchRadiationLevel() -> Double {
+8	return Double.random(in: 0...200) // Тільки отримання даних
+9	}
+
+10	func isRadiationDangerous(level: Double) -> Bool {
+11	return level > 100.0 // Тільки перевірка рівня
 12	}
-13	}
 
-14	let level: Int? = nil
-15	displayRadiationLevel(level: level)  
 
 1.4	Висновок
 	Отже, дотримання правил написання коду є ключовим аспектом розробки програмного забезпечення, оскільки воно значно підвищує читабельність та зрозумілість коду. Консистентне дотримання стандартів забезпечує єдиний стиль написання коду у команді розробників, що робить його легшим для сприйняття і скорочує час на вивчення нових фрагментів. Це дозволяє уникати двозначностей і забезпечує швидку адаптацію нових учасників до проекту. 
