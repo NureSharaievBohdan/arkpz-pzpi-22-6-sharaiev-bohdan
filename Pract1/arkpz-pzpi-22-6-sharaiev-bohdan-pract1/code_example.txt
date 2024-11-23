@@ -134,38 +134,24 @@ func readRadiationLevel(level: Double) {
 }
 
 
------------------------------------------------Опціонали------------------------------
-
-// Приклад використання
-let mySensor = -2.0
-readRadiationLevel(level: mySensor)
+-----------------------------------------------Single Responsibility------------------------------
 
 
 
-// Поганий приклад - форсоване розкриття опціонала без перевірки
-func displayRadiationLevel(level: Int?) {
-    let radiationLevel = level!
-    print("Рівень радіації: \(radiationLevel)")
+// Поганий приклад - метод виконує одразу дві задачі
+func fetchAndAnalyzeRadiation() -> Bool {
+    let radiationLevel = Double.random(in: 0...200) // Отримання даних
+    return radiationLevel > 100.0                 // Аналіз
 }
 
 
-let level: Int? = nil
-displayRadiationLevel(level: level)
 
-// Хороший приклад - безпечне розкриття опціонала за допомогою if let
-func displayRadiationLevel(level: Int?) {
-    if let radiationLevel = level {
-        print("Рівень радіації: \(radiationLevel)")
-    } else {
-        print("Рівень радіації невідомий або не визначений.")
-    }
+
+// Гарний приклад - кожен метод має 1 свою задачу
+func fetchRadiationLevel() -> Double {
+    return Double.random(in: 0...200) // Тільки отримання даних
 }
 
-let level: Int? = nil
-displayRadiationLevel(level: level)  
-
-
-
-
-
-
+func isRadiationDangerous(level: Double) -> Bool {
+    return level > 100.0 // Тільки перевірка рівня
+}
