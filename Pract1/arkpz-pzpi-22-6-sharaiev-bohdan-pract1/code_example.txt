@@ -54,7 +54,7 @@ public func calculateRadiationLevel(readings: [Double]) -> Any { // Погано
     readings.reduce(0, +) / Double(readings.count)
 }
 
-----------------------------------------------Використання let/var-------------------------
+----------------------------------------------Використання let замість магічних чисел-------------------------
 //Гарний приклад - Константа для максимального рівня радіації
 let maxRadiationLimit = 0.30  
 func isRadiationSafe(currentLevel: Double) -> Bool {
