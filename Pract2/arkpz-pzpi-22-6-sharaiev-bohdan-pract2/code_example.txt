@@ -1,1 +1,116 @@
+// До рефакторингу
+func calculateTotalPrice(price: Double, discount: Double, taxRate: Double) -> Double {
+    let discountedPrice = price - (price * discount)
+    let taxAmount = discountedPrice * taxRate
+    let totalPrice = discountedPrice + taxAmount
+    return totalPrice
+}
 
+// Після рефакторингу
+class PriceCalculator {
+    var price: Double
+    var discount: Double
+    var taxRate: Double
+
+    init(price: Double, discount: Double, taxRate: Double) {
+        self.price = price
+        self.discount = discount
+        self.taxRate = taxRate
+    }
+
+    func calculateDiscountedPrice() -> Double {
+        return price - (price * discount)
+    }
+
+    func calculateTax(discountedPrice: Double) -> Double {
+        return discountedPrice * taxRate
+    }
+
+    func calculateTotalPrice() -> Double {
+        let discountedPrice = calculateDiscountedPrice()
+        let taxAmount = calculateTax(discountedPrice: discountedPrice)
+        return discountedPrice + taxAmount
+    }
+}
+
+
+
+// До рефакторингу
+func applyDiscount(price: inout Double, discount: Double) {
+    price -= price * discount
+}
+
+// Після
+func applyDiscount(price: Double, discount: Double) -> Double {
+    let discountedPrice = price - price * discount
+    return discountedPrice
+}
+
+// До рефакторингу
+class Employee {
+    var name: String
+    var salary: Double
+
+    init(name: String, salary: Double) {
+        self.name = name
+        self.salary = salary
+    }
+
+    func calculateBonus() -> Double {
+        return salary * 0.05
+    }
+}
+
+class Manager: Employee {
+    var teamSize: Int
+    init(name: String, salary: Double, teamSize: Int) {
+        self.teamSize = teamSize
+        super.init(name: name, salary: salary)
+    }
+}
+
+class Developer: Employee {
+    var programmingLanguages: [String]
+    init(name: String, salary: Double, programmingLanguages: [String]) {
+        self.programmingLanguages = programmingLanguages
+        super.init(name: name, salary: salary)
+    }
+}
+
+
+// Після
+class Employee {
+    var name: String
+    var salary: Double
+
+    init(name: String, salary: Double) {
+        self.name = name
+        self.salary = salary
+    }
+}
+
+class Manager: Employee {
+    var teamSize: Int
+
+    init(name: String, salary: Double, teamSize: Int) {
+        self.teamSize = teamSize
+        super.init(name: name, salary: salary)
+    }
+
+    func calculateBonus() -> Double {
+        return salary * 0.1 // менеджери отримують більший бонус
+    }
+}
+
+class Developer: Employee {
+    var programmingLanguages: [String]
+
+    init(name: String, salary: Double, programmingLanguages: [String]) {
+        self.programmingLanguages = programmingLanguages
+        super.init(name: name, salary: salary)
+    }
+
+    func calculateBonus() -> Double {
+        return salary * 0.05 // розробники отримують менший бонус
+    }
+}
