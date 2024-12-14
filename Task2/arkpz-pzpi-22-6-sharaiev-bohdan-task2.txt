@@ -1,0 +1,290 @@
+Харківський національний університет радіоелектроніки
+Факультет комп’ютерних наук
+Кафедра програмної інженерії
+
+
+
+
+ЗВІТ
+до лабораторної роботи №2 з дисципліни
+“Аналіз та рефакторинг коду”
+
+
+Виконав
+ст. гр. ПЗПІ-22-6
+Шараєв Б. О.
+
+Перевірив
+ст. викл. Сокорчук І.П.
+
+
+
+
+Харків 2024
+1. Розробка бази даних для серверної частини програмної системи та прикладного програмного інтерфейсу(API).
+1.1 Мета роботи
+	Розробити базу даних для серверної частини  програмної системи та прикладного програмного інтерфейсу.
+1.2 Хід роботи
+1.	 Розробити будову програмної системи.
+Програмна система для моніторингу сенсорних даних та генерації звітів має клієнт-серверну архітектуру. Серверна частина розроблена з використанням Django (Python), що забезпечує ефективне управління даними та надійну обробку запитів. Дані зберігаються у реляційній базі даних PostgreSQL. Взаємодія з клієнтами відбувається через REST API, що дозволяє інтегрувати сервер із веб-інтерфейсом, мобільними додатками та IoT-пристроями. Для аутентифікації використовується JWT (JSON Web Token).
+Модулі серверної частини:
+1)	Модуль авторизації та аутентифікації
+-	Реєстрація, вхід та вихід користувачів (клієнтів та адміністраторів).
+-	Використання JWT для безпечної аутентифікації та авторизації.
+-	Захист доступу до ресурсів на основі ролей користувачів (адміністратори мають розширені права).
+2)	Модуль управління користувачами
+-	Перегляд інформації про всіх користувачів.
+-	Додавання нових користувачів.
+-	Редагування та видалення користувачів за необхідності.
+
+3)	Модуль управління локаціями
+-	Додавання, перегляд, редагування та видалення локацій для сенсорів.
+-	Зв'язування сенсорів з конкретними локаціями для точного моніторингу.
+-	Надання користувачам можливості обирати локації для спостереження.
+4)	Модуль управління сенсорами
+-	Додавання, редагування та видалення IoT-сенсорів.
+-	Призначення сенсорів конкретним локаціям.
+-	Моніторинг статусу сенсорів (активний/неактивний).
+-	Перегляд списку сенсорів користувачем або адміністратором.
+5)	Модуль збору та обробки даних сенсорів
+-	Отримання вимірювань від сенсорів через REST API.
+-	Фільтрація та обробка даних (виявлення помилкових або дубльованих значень).
+-	Збереження радіаційних даних у базі даних для подальшого аналізу.
+-	Надання можливості отримати всі вимірювання для конкретного сенсора.
+6)	Модуль сповіщень
+-	Автоматичне формування та надсилання сповіщень адміністраторам і користувачам при перевищенні критичних показників.
+-	Налаштування порогових значень для сенсорів, що визначають рівень тривоги.
+-	Збереження історії сповіщень у базі даних для подальшого аналізу.
+7)	Модуль управління звітами
+-	Генерація звітів на основі зібраних даних сенсорів.
+-	Перегляд історичних даних по конкретних сенсорах та локаціях.
+-	Можливість завантаження звітів у різних форматах (PDF, CSV).
+-	Надання адміністраторам інструментів для аналізу даних.
+8)	Модуль адміністрування
+-	Повний доступ для адміністраторів до управління користувачами, сенсорами та даними вимірювань.
+-	Аналіз системної активності та моніторинг роботи сенсорів.
+-	Ручне налаштування порогових значень для тривог та управління сповіщеннями.
+-	Перегляд логів активності та виявлення проблем у роботі системи.
+Ця архітектура забезпечує ефективний збір, обробку та аналіз даних, а також зручність взаємодії для всіх типів користувачів системи.
+
+2.	Створити UML діаграму прецедентів для серверної частини системи.
+
+ 
+Рисунок 1 - UML діаграма прецедентів
+
+
+
+3.	Створити ER діаграму даних.
+
+ 
+Рисунок 2 - ER діаграма даних
+
+
+4.	Розробити базу даних (БД) програмної системи.
+Таблиця 1 – Таблиця "Users"
+id	INT <PK>
+username	NVARCHAR(50)
+email	NVARCHAR(100)
+password_hash	NVARCHAR(255)
+Role	NVARCHAR(20)
+created_at	DATETIME
+
+Таблиця 2 - Таблиця "Sensors" 
+id	INT <PK>
+user_id	INT <FK>
+sensor_name	NVARCHAR(50)
+status	NVARCHAR(20)
+last_update	DATETIME
+location_id	INT <FK>
+
+Таблиця 3 – Таблиця "Locations" 
+id	INT <PK>
+Latitude	DECIMAL(9,6)
+Longitude	DECIMAL(9,6)
+City	NVARCHAR(50)
+description	NVARCHAR(255)
+
+Таблиця 4 - Таблиця "RadiationData" 
+id	INT <PK>
+sensor_id	INT <FK>
+radiation_level	DECIMAL(5,2)
+measured_at	DATETIME
+alert_triggered	BIT
+
+Таблиця 5 - Таблиця "Alerts" 
+id	INT <PK>
+sensor_id	INT <FK>
+alert_message	NVARCHAR(255)
+alert_level	NVARCHAR(20)
+triggered_at	DATETIME
+resolved	BIT
+
+Таблиця 6 - Таблиця "Reports" 
+id	INT <PK>
+user_id	INT <FK>
+sensor_id	INT <FK>
+report_name	NVARCHAR(100)
+created_at	DATETIME
+report_data	NVARCHAR(MAX)
+
+
+
+5.	Створити діаграму структури БД.
+Було створено діаграму структури БД:
+ 
+Рисунок 3 – Структура БД
+
+6.	Розробити функції роботи з БД (ORM або CoRM тощо).
+Було розроблено функції для роботи з БД(ORM):
+1  class User(models.Model):
+2      id = models.AutoField(primary_key=True)
+3      username = models.CharField(max_length=50)
+4      email = models.EmailField(max_length=100, unique=True)
+5      password_hash = models.CharField(max_length=255)
+6      role = models.CharField(max_length=20)
+7      created_at = models.DateTimeField(auto_now_add=True)
+8  
+9      class Meta:
+10         db_table = 'users'
+11         managed = True
+12  
+13     def __str__(self):
+14         return self.username
+15  
+16  
+17 class Location(models.Model):
+18     id = models.AutoField(primary_key=True)
+19     latitude = models.DecimalField(max_digits=9, decimal_places=6)
+20     longitude = models.DecimalField(max_digits=9, decimal_places=6)
+21     city = models.CharField(max_length=50)
+22     description = models.CharField(max_length=255, null=True, blank=True)
+23  
+24     class Meta:
+25         db_table = 'locations'
+26         managed = True
+27  
+28     def __str__(self):
+29         return self.city
+30  
+31  
+32 class Sensor(models.Model):
+33     id = models.AutoField(primary_key=True)
+34     user = models.ForeignKey(User, on_delete=models.CASCADE)
+35     sensor_name = models.CharField(max_length=50)
+36     status = models.CharField(max_length=20)
+37     last_update = models.DateTimeField(auto_now=True)
+38     location = models.ForeignKey(Location, on_delete=models.SET_NULL, null=True, blank=True)
+39  
+40     class Meta:
+41         db_table = 'sensors'
+42         managed = True
+43  
+44     def __str__(self):
+45         return self.sensor_name
+46  
+47  
+48 class RadiationData(models.Model):
+49     id = models.AutoField(primary_key=True)
+50     sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
+51     radiation_level = models.DecimalField(max_digits=5, decimal_places=2)
+52     measured_at = models.DateTimeField(auto_now_add=True)
+53     alert_triggered = models.BooleanField(default=False)
+54  
+55     class Meta:
+56         db_table = 'radiation_data'
+57         managed = True
+58  
+59     def __str__(self):
+60         return f"{self.sensor.sensor_name} - {self.radiation_level}"
+61  
+62  
+63 class Alert(models.Model):
+64     id = models.AutoField(primary_key=True)
+65     sensor = models.ForeignKey(Sensor, on_delete=models.CASCADE)
+66     alert_message = models.CharField(max_length=255)
+67     alert_level = models.CharField(max_length=20)
+68     triggered_at = models.DateTimeField(auto_now_add=True)
+69     resolved = models.BooleanField(default=False)
+70  
+71     class Meta:
+72         db_table = 'alerts'
+73         managed = True
+74  
+75     def __str__(self):
+76         return f"Alert {self.alert_level} - {self.alert_message}"
+77  
+78  
+79 class Report(models.Model):
+80     id = models.AutoField(primary_key=True)
+81     user = models.ForeignKey(User, on_delete=models.CASCADE)
+82     sensor = models.ForeignKey(Sensor, on_delete=models.SET_NULL, null=True, blank=True)
+83     report_name = models.CharField(max_length=100)
+84     created_at = models.DateTimeField(auto_now_add=True)
+85     report_data = models.TextField(null=True, blank=True)
+86  
+87     class Meta:
+88         db_table = 'reports'
+89         managed = True
+90  
+91     def __str__(self):
+92         return self.report_name
+
+
+
+
+
+7.	Створити специфікацію розробленого API.
+Таблиця 7 – Специфікація розробленого API.
+Метод запиту	Шлях	Пояснення
+POST	/auth/login/	Авторизація користувача. Повертає JWT токени.
+GET	/users/	Запит списку всіх користувачів.
+POST	/users/	Створення нового користувача.
+GET	/users/<int:id>/	Запит інформації про конкретного користувача.
+PUT	/users/<int:id>/	Оновлення інформації конкретного користувача.
+DELETE	/users/<int:id>/	Видалення користувача.
+GET	/users/<int:id>/sensors/	Запит датчиків конкретного користувача.
+GET	/locations/	Запит списку всіх локацій.
+POST	/locations/	Створення нової локації.
+GET	/locations/<int:id>/	Запит інформації про конкретну локацію.
+PUT	/locations/<int:id>/	Оновлення локації.
+DELETE	/locations/<int:id>/	Видалення локації.
+GET	/sensors/	Запит списку всіх датчиків.
+POST	/sensors/	Створення нового датчика.
+GET	/sensors/<int:id>/	Запит інформації про конкретний датчик.
+PUT	/sensors/<int:id>/	Оновлення інформації конкретного датчика.
+DELETE	/sensors/<int:id>/	Видалення датчика.
+GET	/sensors/<int:id>/radiation-data/	Запит даних радіації для конкретного датчика.
+GET	/radiation-data/	Запит усіх даних про радіацію.
+POST	/radiation-data/	Додавання нових даних про радіацію.
+GET	/radiation-data/<int:id>/	Запит конкретних даних про радіацію.
+DELETE	/radiation-data/<int:id>/	Видалення конкретних даних про радіацію.
+GET	/alerts/	Запит списку всіх попереджень.
+POST	/alerts/	Створення нового попередження.
+GET	/alerts/<int:id>/	Запит конкретного попередження.
+DELETE	/alerts/<int:id>/	Видалення конкретного попередження.
+GET	/reports/	Запит усіх звітів.
+POST	/reports/	Створення нового звіту.
+GET	/reports/<int:id>/	Запит конкретного звіту.
+DELETE	/reports/<int:id>/	Видалення конкретного звіту.
+
+8.	Створити програмну реалізацію розробленого API та функцій роботи з БД.
+Приклад розробленого API для виводу сенсорів вибраного юзеру:
+1.  class UserSensorsList(APIView):
+2.      def get(self, request, id):
+3.          try:
+4.              user = User.objects.get(id=id)
+5.          except User.DoesNotExist:
+6.              return Response({'error': 'User not found'}, status=status.HTTP_404_NOT_FOUND)
+7.          
+8.          sensors = Sensor.objects.filter(user=user)
+9.          serializer = SensorSerializer(sensors, many=True)
+10.         return Response(serializer.data, status=status.HTTP_200_OK)
+9.	Перевірити роботу створеного програмного коду серверної частини системи.
+Перевіримо роботу створеного API для виводу сенсорів за юзером:
+ 
+Рисунок 4 – Перевірка створеного API.
+
+4. Висновок
+Виконючи лаборотарну роботу було розроблено будову програмної системи для проєкту RadGuard.
+
+Посилання на відеозапис Youtube: TODO.
