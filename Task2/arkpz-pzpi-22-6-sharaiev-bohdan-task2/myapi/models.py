@@ -85,7 +85,7 @@ class Report(models.Model):
     sensor = models.ForeignKey(Sensor, on_delete=models.SET_NULL, null=True, blank=True)
     report_name = models.CharField(max_length=100)
     created_at = models.DateTimeField(auto_now_add=True)
-    report_data = models.TextField(null=True, blank=True)
+    report_path = models.CharField(max_length=255)
 
     class Meta:
         db_table = 'reports'
@@ -93,3 +93,4 @@ class Report(models.Model):
 
     def __str__(self):
         return self.report_name
+
