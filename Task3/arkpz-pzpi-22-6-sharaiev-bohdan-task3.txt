@@ -1,1 +1,236 @@
+Харківський національний університет радіоелектроніки
+Факультет комп’ютерних наук
+Кафедра програмної інженерії
 
+
+ЗВІТ
+
+до лабораторної роботи №3 з дисципліни
+“Аналіз та рефакторинг коду”
+
+
+Перевірив:
+ст. викл. Сокорчук І.П.
+
+Виконав ст. гр. ПЗПІ-22-6
+Шараєв Б. О.
+
+
+
+Харків 2024
+
+
+
+
+1. РОЗРОБКА БІЗНЕС-ЛОГІКИ ТА ФУНКЦІЙ АДМІНІСТРУВАННЯ
+СЕРВЕРНОЇ ЧАСТИНИ ПРОГРАМНОЇ СИСТЕМИ
+
+1.1 Мета роботи
+Розробити бізнес-логику та функції адміністрування серверної
+частини програмної системи.
+
+1.2 Хід роботи
+
+1.2.1 Розробити бізнес логіку серверної частини програмної системи.
+
+Математична бізнес-логіка для прогнозування рівня радіації для локації,
+в якій знаходиться сенсор, та історичних вимірювань радіації в цій локації:
+- Спочатку система збирає інформацію про попередні вимірювання
+радіації у визначеній зоні.
+- Дані обробляються за допомогою формули лінійної регресії на основі
+різних наборів даних.
+- Результатом є прогноз(рівень радіації) на визначений проміжок часу,
+наприклад, 5 годин, який надається користувачу для аналізу або
+подальшої дії.
+Бізнес-логіка для відправки сповіщень про перевищення рівня радіації
+для інформування користувачів у разі небезпеки:
+- Система отримує поточні дані з сенсорів, перевіряє їх відповідність
+встановленим допустимим межам і, якщо виявлено перевищення,
+формує сповіщення.
+- У повідомленні вказуються деталі про місце, де зафіксовано
+аномальні показники, поточний рівень радіації та рекомендації щодо
+подальших дій.
+- Це дозволяє користувачам своєчасно реагувати на потенційну
+загрозу.
+Математична бізнес логіка для генерації звітів є ще одним важливим
+компонентом системи:
+- Користувач обирає період по якому буде формуватися звіт.
+- Система збирає радіаційні виміри в цьому періоді, та вираховує для
+цих даних: середнє значення, мінімум, максимум, моду, медіану та
+середнє відхилення для рівню радіації.
+- Звіт формується у PDF формат, що забезпечує зручність подальшого
+використання інформації.
+
+1.2.2 Розробити функції адміністрування серверної частини програмної
+системи.
+
+Функції адміністрування серверної частини забезпечують належне
+управління та підтримку роботи системи.
+Адміністратор системи відповідає за управління наступними
+елементами системи:
+- Перегляд існуючої інформації про користувачів.
+- Перегляд інформації про всі сенсори та локації.
+- Редагування інформації про користувачів(роль користувача).
+- Видалення записів про користувачів.
+- Редагування інформації про сенсори.
+- Видалення записів про сенсори.
+- Редагування інформації про локацій.
+- Видалення записів про локації.
+Адміністратор бази даних здійснює технічну підтримку, забезпечуючи
+оптимальну продуктивність бази даних.
+Його обов’язки включають наступне:
+- Створення резервних копій даних.
+- Відновлення бази у разі збою та налаштування продуктивності для
+забезпечення швидкого доступу до даних.
+- Виконання міграцій бази даних.
+Користувач системи має доступ до своїх даних і функцій, пов’язаних із
+власними сенсорами та даних з них.
+Функції користувача включають:
+- Перегляд історії вимірювань власних сенсорів.
+- Отримувати сповіщення про аномальні показники.
+- Завантажувати звіти з власних сенсорів для подальшого аналізу.
+- Отримувати прогноз рівня радіації по обраній локації.
+- Редагувати власну інформацію про свій профіль.
+- Додавання локацій для власних сенсорів.
+- Редагувати інформацію про власний сенсор.
+- Видалення власних сенсорів, звітів та сповіщень.
+
+1.2.3 Створити UML-діаграми для серверної частини.
+
+Рисунок 1.2.3.1 – UML-діаграма діяльності для серверної частини
+Рисунок 1.2.3.2 – UML-діаграма діяльності для серверної частини
+Рисунок 1.2.3.3 – UML-діаграма взаємодії для серверної частини
+Рисунок 1.2.3.4 – UML-діаграма взаємодії для серверної частини
+
+1.2.4 Створити програмну реалізацію бізнес-логіки та функцій
+
+адміністрування серверної частини.
+Приклад реалізації бізнес-логіки прогнозування рівня радіації:
+1. def predict_radiation(times, radiation_levels,
+predict_time):
+2. if len(times) < 2 or len(radiation_levels) < 2:
+3. raise ValueError("Not enough data for
+prediction")
+4. n = len(times)
+5. mean_time = sum(times) / n
+6. mean_radiation = sum(radiation_levels) / n
+7. numerator = sum((times[i] - mean_time) *
+(radiation_levels[i] - mean_radiation) for i in range(n))
+8. denominator = sum((times[i] - mean_time) ** 2 for i
+in range(n))
+9. if denominator == 0:
+10. raise ValueError("Cannot fit a line, all times
+are the same")
+11. slope = numerator / denominator
+12. intercept = mean_radiation - slope * mean_time
+13. predicted_radiation = slope * predict_time +
+intercept
+14. return predicted_radiation
+
+1.3 Висновок
+
+Під час виконання роботи було розроблено бізнес-логіку і функції
+адміністрування серверної частини системи для моніторингу радіаційних
+даних, створено UML-діаграми та програмну реалізацію основних функцій
+системи.
+
+Посилання на відеозапис: https://youtu.be/wTBn1XEhr7U
+
+
+
+ДОДАТОК А
+Код математичної бізнес-логіки для формування звітів:
+1. class GenerateReport(APIView):
+2. permission_classes = [IsAuthenticated]
+3. def get(self, request, sensor_id: int, start_date:
+str, end_date: str) -> Response:
+4. user = request.user
+5. try:
+6. start_date = datetime.strptime(start_date,
+'%Y-%m-%d')
+7. end_date = datetime.strptime(end_date, '%Y-%m-
+%d')
+8. except ValueError:
+9. return Response({"error": "Invalid date format.
+Use 'YYYY-MM-DD'."}, status=status.HTTP_400_BAD_REQUEST)
+10. try:
+11. sensor = Sensor.objects.get(id=sensor_id)
+12. except Sensor.DoesNotExist:
+13. return Response({"error": "Sensor not found"},
+status=status.HTTP_404_NOT_FOUND)
+14. is_user_sensor =
+Sensor.objects.filter(id=sensor_id, user=user).first()
+15. if not is_user_sensor:
+16. return Response({"error": "Invalid sensor for
+user"}, status=status.HTTP_404_NOT_FOUND)
+17. radiation_data = RadiationData.objects.filter(
+18. sensor_id=sensor_id,
+19. measured_at__range=(start_date, end_date)
+20. ).order_by('measured_at')
+21. if not radiation_data.exists():
+22. return Response({"error": "No data available
+for the selected period"}, status=status.HTTP_404_NOT_FOUND)
+23. radiation_levels = [data.radiation_level for data
+in radiation_data]
+24. avg_radiation = sum(radiation_levels) /
+len(radiation_levels)
+25. min_radiation = min(radiation_levels)
+26. max_radiation = max(radiation_levels)
+27. median_radiation =
+statistics.median(radiation_levels)
+28. mode_radiation =
+Counter(radiation_levels).most_common(1)[0][0]
+29. std_deviation = statistics.stdev(radiation_levels)
+if len(radiation_levels) > 1 else 0
+30. duration = (end_date - start_date).total_seconds()
+/ 3600
+31. measurements_per_hour = len(radiation_levels) /
+float(duration) if duration > 0 else 0
+32. location =
+Location.objects.get(id=sensor.location.id)
+33. reports_dir = os.path.join(settings.BASE_DIR,
+"reports")
+34. os.makedirs(reports_dir, exist_ok=True)
+35. report_name =
+f"звіт_про_рівень_радіації_{sensor_id}_{start_date.strftime('%Y%
+m%d')}_до_{end_date.strftime('%Y%m%d')}.pdf"
+36. report_path = os.path.join(reports_dir,
+report_name)
+37. c = canvas.Canvas(report_path, pagesize=letter)
+38. c.setFont("Helvetica", 14)
+39. c.drawString(50, 750, f"Radiation Level Report")
+40. c.drawString(50, 730, f"Sensor:
+{radiation_data.first().sensor.sensor_name}")
+41. c.drawString(50, 710, f"Location: {location.city}")
+42. c.drawString(50, 690, f"Longitude:
+{location.longitude}, Latitude: {location.latitude}")
+43. c.drawString(50, 670, f"Period: {start_date.date()}
+- {end_date.date()}")
+44. c.drawString(50, 650, f"Average radiation level:
+{avg_radiation:.2f}")
+45. c.drawString(50, 630, f"Minimum radiation level:
+{min_radiation:.2f}")
+46. c.drawString(50, 610, f"Maximum radiation level:
+{max_radiation:.2f}")
+47. c.drawString(50, 590, f"Median radiation level:
+{median_radiation:.2f}")
+48. c.drawString(50, 570, f"Mode radiation level:
+{mode_radiation:.2f}")
+49. c.drawString(50, 550, f"Standard Deviation:
+{std_deviation:.2f}")
+50. c.drawString(50, 530, f"Measurements per hour:
+{measurements_per_hour:.2f}")
+51. c.drawString(50, 490, f"Measurements count:
+{len(radiation_levels)}")
+52. c.save()
+53. relative_report_path =
+os.path.relpath(report_path, settings.BASE_DIR)
+54. report = Report.objects.create(
+55. user=user,
+56. sensor=sensor,
+57. report_name=f"Звіт про рівень радіації з
+{start_date.date()} по {end_date.date()}",
+58. report_path=relative_report_path,
+59. )
+60. serializer = ReportSerializer(report, many=False)
+61. return Response(serializer.data)
