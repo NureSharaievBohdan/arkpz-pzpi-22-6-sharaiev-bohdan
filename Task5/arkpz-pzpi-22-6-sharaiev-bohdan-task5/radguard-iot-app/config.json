@@ -1,0 +1,16 @@
+{
+  "base_url": "https://radguardback-production.up.railway.app/api/",
+  "sensor_api": "sensors/",
+  "location_api": "locations/",
+  "radiation_api": "radiation-data/",
+  "login_api": "auth/login/",
+  "email": "bohdan.sharaiev@nure.ua",
+  "password": "12345678",
+  "radiation_levels": {
+    "low": 0.1,
+    "moderate": 0.3,
+    "high": 0.5,
+    "critical": 1.0
+  },
+  "sensor_update_interval_ms": 3000
+}
